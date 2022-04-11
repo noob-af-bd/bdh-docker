@@ -6,7 +6,7 @@ RUN apt-get -y update && apt-get -y upgrade && \
         apt-get install -y software-properties-common && \
         add-apt-repository -y ppa:qbittorrent-team/qbittorrent-stable && \
         apt-get install -y python3 python3-pip python3-lxml aria2 \
-        qbittorrent-nox tzdata p7zip-full p7zip-rar xz-utils wget curl pv jq \
+        qbittorrent-nox tzdata p7zip-full p7zip-rar xz-utils wget libmagic-dev libffi-dev curl pv jq \
         ffmpeg locales unzip neofetch mediainfo git make g++ gcc automake \
         autoconf libtool libcurl4-openssl-dev qt5-default \
         libsodium-dev libssl-dev libcrypto++-dev libc-ares-dev \
