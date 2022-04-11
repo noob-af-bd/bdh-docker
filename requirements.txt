@@ -24,6 +24,7 @@ psycopg2-binary
 pybase64
 pymongo
 pyrogram
+Pyrogram
 python-dotenv
 python-magic
 python-telegram-bot
