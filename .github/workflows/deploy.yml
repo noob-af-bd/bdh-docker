@@ -27,4 +27,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: alexstuart1/bangladeshHoarding:new
+          tags: alexstuart1/bangladeshhoarding:new
