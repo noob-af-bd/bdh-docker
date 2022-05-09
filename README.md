@@ -11,6 +11,6 @@
  - DOCKER_PASSWORD - Your Dockerhub Password
  - Go to .github/workflows/deploy.yml
  - Edit Line 31 according to your dockerhub username and docker image name you want
- - Example - alexstuart1/bdh:latest
+ - Example - alexstuart1/bangladeshhoarding:new
 ```
 - Go to Repo Actions and run deploy.yml  and Enjoy!
