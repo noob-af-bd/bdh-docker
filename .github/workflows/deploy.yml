@@ -25,6 +25,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64
+          platforms: linux/arm64
           push: true
-          tags: alexstuart1/bangladeshhoarding:new
+          tags: alexstuart1/bangladeshhoarding:arm64
