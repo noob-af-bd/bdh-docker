@@ -1,42 +1,39 @@
-FROM ubuntu:20.04
+FROM python:3.9-slim
 
-ENV DEBIAN_FRONTEND="noninteractive"
+WORKDIR /
 
-RUN apt-get -y update && apt-get -y upgrade && \
+RUN if [ "$(uname -m)" = "aarch64" ] ; then \
+        export HOST_CPU_ARCH=arm64; \
+    elif [ "$(uname -m)" = "x86_64" ]; then \
+        export HOST_CPU_ARCH=amd64; \
+        apt-get -y update && apt-get -y upgrade && \
         apt-get install -y software-properties-common && \
         add-apt-repository -y ppa:qbittorrent-team/qbittorrent-stable && \
         apt-get install -y python3 python3-pip python3-lxml aria2 \
         qbittorrent-nox tzdata p7zip-full p7zip-rar xz-utils wget libmagic-dev libffi-dev curl pv jq \
-        ffmpeg locales unzip neofetch mediainfo git make g++ gcc automake \
+        locales unzip neofetch mediainfo git make g++ gcc automake \
         autoconf libtool libcurl4-openssl-dev qt5-default \
         libsodium-dev libssl-dev libcrypto++-dev libc-ares-dev \
         libsqlite3-dev libfreeimage-dev swig libboost-all-dev \
-        libpthread-stubs0-dev zlib1g-dev
+        libpthread-stubs0-dev zlib1g-dev && \
+        wget -q https://github.com/yzop/gg/raw/main/ffmpeg-git-${HOST_CPU_ARCH}-static.tar.xz && \
+        tar -xf ff*.tar.xz && rm -rf *.tar.xz && \
+        mv ff*/ff* /usr/local/bin/ && rm -rf ff* && \
+        wget -q https://github.com/viswanathbalusu/megasdkrest/releases/latest/download/megasdkrest-${HOST_CPU_ARCH} -O /usr/local/bin/megasdkrest && \
+        chmod a+x /usr/local/bin/megasdkrest && mkdir /app/ && chmod 777 /app/ && \
+        apt-get -y autoremove && rm -rf /var/lib/apt/lists/* && apt-get clean && \
+        pip3 install --no-cache-dir MirrorX && \
+        apt-get purge -yqq gcc && apt-get -y autoremove && rm -rf /var/lib/apt/lists/* && apt-get clean
         
-# Installing Megasdkrest
-RUN curl -fsSL https://github.com/jaskaranSM/megasdkrest/releases/download/v0.1/megasdkrest -o /usr/local/bin/megasdkrest \
-&& chmod +x /usr/local/bin/megasdkrest
-
-# Installing Mega SDK Python Binding
-ENV MEGA_SDK_VERSION="3.8.1"
-RUN git clone https://github.com/meganz/sdk.git --depth=1 -b v$MEGA_SDK_VERSION ~/home/sdk \
-    && cd ~/home/sdk && rm -rf .git \
-    && autoupdate -fIv && ./autogen.sh \
-    && ./configure --disable-silent-rules --enable-python --with-sodium --disable-examples \
-    && make -j$(nproc --all) \
-    && cd bindings/python/ && python3 setup.py bdist_wheel \
-    && cd dist/ && pip3 install --no-cache-dir megasdk-$MEGA_SDK_VERSION-*.whl 
-
 # Requirements Mirror Bot
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 RUN apt-get -y update && apt-get -y upgrade && apt-get -y autoremove && apt-get -y autoclean
 
-WORKDIR /usr/src/app
-RUN chmod 777 /usr/src/app
+WORKDIR /app
+RUN chmod 777 /app
 
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+COPY . .
+
+CMD ["bash", "start.sh"]
